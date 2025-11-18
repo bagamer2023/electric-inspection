@@ -23,12 +23,6 @@ else:
 # user = "itbkd"
 # pass = "M1nd@t:62"
 
-if username != st.secrets["auth"]["user"] or password != st.secrets["auth"]["pass"]:
-    st.warning("กรุณาเข้าสู่ระบบก่อน")
-    st.stop()
-else:
-    st.success("เข้าสู่ระบบสำเร็จ ✅")
-
 # โหลดข้อมูล
 with open("inspection_plan.json", "r", encoding="utf-8") as f:
     data = json.load(f)
@@ -270,3 +264,4 @@ for item in data:
     else:
 
         st.warning("ยังไม่มีข้อมูลการตรวจสอบ")
+
