@@ -86,10 +86,12 @@ with tab2:
     st.subheader("อัปโหลดรูปภาพ")
     upload_option = st.radio("เลือกวิธี:", ["ถ่ายภาพด้วยกล้อง", "อัปโหลดไฟล์"])
     images = []
+
     if upload_option == "ถ่ายภาพด้วยกล้อง":
-        photo = st.camera_input("ถ่ายภาพ")
-        if photo:
-            st.image(photo)
+        if st.button("📷 เปิดกล้อง"):
+            photo = st.camera_input("ถ่ายภาพ")
+            if photo:
+                st.image(photo)
     else:
         uploaded_files = st.file_uploader("เลือกไฟล์", type=["jpg", "png"], accept_multiple_files=True)
         if uploaded_files:
@@ -264,4 +266,5 @@ for item in data:
     else:
 
         st.warning("ยังไม่มีข้อมูลการตรวจสอบ")
+
 
