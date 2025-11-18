@@ -8,9 +8,14 @@ file_name = "inspection_plan.json"
 
 # ✅ ระบบล็อกอิน
 # =============================
-st.subheader("🔐 เข้าสู่ระบบ")
 username = st.text_input("Username")
 password = st.text_input("Password", type="password")
+
+if username != st.secrets["AUTH_USER"] or password != st.secrets["AUTH_PASS"]:
+    st.warning("กรุณาเข้าสู่ระบบก่อน")
+    st.stop()
+else:
+    st.success("เข้าสู่ระบบสำเร็จ ✅")
 
 # ใช้ st.secrets เพื่อความปลอดภัย (ต้องสร้างไฟล์ .streamlit/secrets.toml)
 # ตัวอย่างไฟล์ secrets.toml:
@@ -263,4 +268,5 @@ for item in data:
             mime="text/csv"
         )
     else:
+
         st.warning("ยังไม่มีข้อมูลการตรวจสอบ")
