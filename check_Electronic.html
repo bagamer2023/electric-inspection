@@ -1,0 +1,673 @@
+
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>แบบฟอร์มตรวจเช็คระบบไฟฟ้า + คำนวณอายุการซื้อ</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(rgba(255,255,255,0.9), rgba(255,255,255,0.9)),
+        url('https://images.unsplash.com/photo-1603791440384-56cd371ee9a7?auto=format&fit=crop&w=1350&q=80');
+      background-size: cover;
+      background-position: center;
+      margin: 0;
+      padding: 20px;
+    }
+    h1 {
+      color: #ff6600;
+      text-align: center;
+      margin-bottom: 30px;
+      line-height: 1.4;
+    }
+    form {
+      background-color: rgba(255, 255, 255, 0.95);
+      padding: 20px;
+      border-radius: 10px;
+      max-width: 800px;
+      margin: 0 auto 20px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    }
+    label { display: block; margin-top: 15px; font-weight: bold; }
+    select, input[type="text"], input[type="file"], input[type="date"], textarea {
+      width: 100%; padding: 8px; margin-top: 5px; border-radius: 6px; border: 1px solid #ccc; font-size: 14px; background: #fff;
+    }
+    button {
+      margin-top: 16px; padding: 10px 18px; background-color: #ff6600; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;
+    }
+    button:hover { background-color: #cc5200; }
+    .btn-secondary { background-color: #444; }
+    .btn-secondary:hover { background-color: #222; }
+    .btn-outline { background: transparent; color: #ff6600; border: 1px solid #ff6600; }
+    .btn-outline:hover { background: #fff1e6; }
+    .btn-row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+    .status-bar { margin-top: 10px; padding: 8px 10px; border: 1px dashed #ccc; border-radius: 6px; background: #fcfcfc; font-size: 14px; }
+    .table-container { overflow-x: auto; border: 1px solid #ccc; border-radius: 6px; background: #fff; padding: 10px; max-width: 1000px; margin: 0 auto; }
+    table { border-collapse: collapse; font-size: 12px; min-width: 900px; width: 100%; }
+    th, td { border: 1px solid #ccc; padding: 6px 8px; text-align: center; white-space: nowrap; }
+    th { background-color: #f0f0f0; position: sticky; top: 0; z-index: 1; }
+    .checked { background-color: #c8f7c5; font-weight: bold; color: #2b8a3e; }
+    .card {
+      border: 1px solid #ccc; border-radius: 8px; padding: 12px;
+      margin: 10px auto; max-width: 1000px; background: #fff;
+    }
+    section { margin-bottom: 24px; }
+    .container { max-width: 1000px; margin: 0 auto; }
+    .list-header { max-width: 1000px; margin: 0 auto 8px; font-weight: 600; }
+    .muted { color: #666; font-size: 12px; }
+    .pill { display:inline-block; padding:2px 8px; border-radius: 999px; font-size: 12px; border:1px solid #ddd; background:#f7f7f7; margin-left:6px; }
+    .danger { color:#b00020; }
+    /* สำหรับเช็คบ็อกซ์รายการ */
+    .record-select {
+      display:flex; align-items:center; gap:8px; margin-bottom:6px;
+    }
+    .toolbar {
+      display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin: 8px auto; max-width:1000px;
+    }
+  </style>
+</head>
+<body>
+  <h1>
+    IT Maintenance<br>
+    PROFESSIONAL ELECTRICIAN
+  </h1>
+
+  <!-- ===== ฟอร์มตรวจเช็คระบบไฟฟ้า ===== -->
+  <section class="container">
+    <form id="inspectionForm" enctype="multipart/form-data">
+      <h2 style="margin-top:0;">แบบฟอร์มตรวจเช็คระบบไฟฟ้า</h2>
+
+      <label for="location">สถานที่</label>
+      <select id="location" name="location" required>
+        <option value="">-- เลือกสถานที่ --</option>
+        <option value="1.บ้านพักพนักงาน">1.บ้านพักพนักงาน</option>
+        <option value="2.เสาทางเข้าโรงงาน">2.เสาทางเข้าโรงงาน</option>
+        <option value="3.ตู้ CCTV โรงรถ">3.ตู้ CCTV โรงรถ</option>
+        <option value="4.ตู้ CCTV ข้างป้อมรปภ.2">4.ตู้ CCTV ข้างป้อมรปภ.2</option>
+        <option value="5.ข้างในป้อมรปภ.2">5.ข้างในป้อมรปภ.2</option>
+        <option value="6.ตู้ CCTV หมักส่าฝั่งทางเข้าโรงงาน">6.ตู้ CCTV หมักส่าฝั่งทางเข้าโรงงาน</option>
+        <option value="7.ตู้ CCTV ฝั่งติดกลั่น">7.ตู้ CCTV ฝั่งติดกลั่น</option>
+        <option value="8.ตู้ CCTV Ro">8.ตู้ CCTV Ro</option>
+        <option value="9.ตู้ CCTV กลั่น">9.ตู้ CCTV กลั่น</option>
+        <option value="10.แพลนปรับสภาพน้ำ">10.แพลนปรับสภาพน้ำ</option>
+        <option value="11.ต้นกำลัง">11.ต้นกำลัง</option>
+        <option value="12.CCTV Server room">12.CCTV Server room</option>
+        <option value="13.CCTV ห้องหัวหน้าบรรจุ">13.CCTV ห้องหัวหน้าบรรจุ</option>
+        <option value="14.CCTV ตู้หน้าลิฟฟ์บรรจุ">14.CCTV ตู้หน้าลิฟฟ์บรรจุ</option>
+        <option value="15.ท่าน้ำปรับสภาพน้ำ">15.ท่าน้ำปรับสภาพน้ำ</option>
+        <option value="16.ท่าน้ำตรงตู้ไฟใหญ่">16.ท่าน้ำตรงตู้ไฟใหญ่</option>
+        <option value="17.TBL ตู้ CCTV">17.TBL ตู้ CCTV</option>
+        <option value="18.สิ่งแวดล้อมตู้หน้าแผนก">18.สิ่งแวดล้อมตู้หน้าแผนก</option>
+        <option value="19.ตู้อาคารพักขยะ">19.ตู้อาคารพักขยะ</option>
+        <option value="20.สิ่งแวดล้อมตู้กลางบ่อ">20.สิ่งแวดล้อมตู้กลางบ่อ</option>
+        <option value="21.ปรุงสุราอาคาร 1">21.ปรุงสุราอาคาร 1</option>
+        <option value="22.ปรุงสุราอาคาร 2">22.ปรุงสุราอาคาร 2</option>
+        <option value="23.โรงบรมบริเวณหัวโค้งไปศาล">23.โรงบรมบริเวณหัวโค้งไปศาล</option>
+        <option value="24.โรงบรมบริเวณหัวโค้งไปศาล2(ป้อมยาม)">24.โรงบรมบริเวณหัวโค้งไปศาล2(ป้อมยาม)</option>
+        <option value="25.HOM internet">25.HOM internet</option>
+        <option value="26.พัสดุ internet">26.พัสดุ internet</option>
+        <option value="27.โรงงานอาหาร  internet">27.โรงงานอาหาร  internet</option>
+        <option value="28.ซ่อมบำรุง  internet">28.ซ่อมบำรุง  internet</option>
+        <option value="29.อาคารวิทยาศาสตร์  internet">29.อาคารวิทยาศาสตร์  internet</option>
+        <option value="30.บรรจุ  internet">30.บรรจุ  internet</option>
+        <option value="31.Serverroom  internet">31.Serverroom  internet</option>
+        <option value="32.กลั่น  internet">32.กลั่น  internet</option>
+        <option value="33.บักพักเรืองรับรอง  internet">33.บักพักเรืองรับรอง  internet</option>
+        <option value="34.HOM เครื่องเสียงชั่น 2">34.HOM เครื่องเสียงชั่น 2</option>
+        <option value="35.HOM เครื่องเสียงชั่น 1">35.HOM เครื่องเสียงชั่น 1</option>
+        <option value="36.ตึกอำนวยการ ประชุม1 เครื่องเสียง ">36.ตึกอำนวยการ ประชุม1 เครื่องเสียง </option>
+        <option value="37.ตึกอำนวยการ ประชุม4 เครือ่งเสียง ">37.ตึกอำนวยการ ประชุม4 เครือ่งเสียง </option>
+      </select>
+
+      <label for="day">วัน</label>
+      <select id="day" name="day">
+        <option value="">--เลือกวัน--</option>
+        <option value="จันทร์">จันทร์</option>
+        <option value="อังคาร">อังคาร</option>
+        <option value="พุธ">พุธ</option>
+        <option value="พฤหัสบดี">พฤหัสบดี</option>
+        <option value="ศุกร์">ศุกร์</option>
+        <option value="เสาร์">เสาร์</option>
+        <option value="อาทิตย์">อาทิตย์</option>
+      </select>
+
+      <label for="inspectionDate">📅 วันที่ตรวจสอบ</label>
+      <input type="date" id="inspectionDate" name="inspectionDate">
+
+      <label for="methodSelect">วิธีการตรวจ + อุปกรณ์ที่ใช้</label>
+      <select id="methodSelect" name="methodSelect">
+        <option value="">--วิธีการตรวจ + อุปกรณ์ที่ใช้--</option>
+        <option value="ตรวจเช็คทางกายภาพ + Infrared Thermometer">ตรวจเช็คทางกายภาพ + Infrared Thermometer</option>
+        <option value="ตรวจเช็คทางกายภาพ">ตรวจเช็คทางกายภาพ</option>
+        <option value="อื่นๆ">อื่นๆ</option>
+      </select>
+
+      <label for="methodExtra">ระบุเพิ่มเติม</label>
+      <input type="text" id="methodExtra" name="methodExtra">
+
+      <label for="resultSelect">ผลการตรวจสายไฟ</label>
+      <select id="resultSelect" name="resultSelect">
+        <option value="">--เลือกผลการตรวจ--</option>
+        <option value="สายปกติ">สายปกติ</option>
+        <option value="สายผิดปกติ">สายผิดปกติ</option>
+      </select>
+      <label for="wireResult">ระบุเพิ่มเติม</label>
+      <input type="text" id="wireResult" name="wireResult">
+
+      <label for="wireTempSelect">อุณหภูมิสาย (°C)</label>
+      <select id="wireTempSelect" name="wireTempSelect">
+        <option value="">--เลือกอุณหภูมิ--</option>
+        <option value="ปกติ">ปกติ</option>
+        <option value="ร้อน">ร้อน</option>
+        <option value="ร้อนมาก">ร้อนมาก</option>
+        <option value="เย็น">เย็น</option>
+      </select>
+      <label for="wire_temp">ระบุเพิ่มเติม</label>
+      <input type="text" id="wire_temp" name="wire_temp" placeholder="เช่น 45°C">
+
+      <label for="peripheralSelect">อุปกรณ์ต่อพ่วง,ปลั๊กไฟ</label>
+      <select name="peripheralSelect" id="peripheralSelect">
+        <option value="">--เลือกคุณภาพอุปกรณ์ต่อพ่วง--</option>
+        <option value="ได้มาตรฐาน">ได้มาตรฐาน</option>
+        <option value="ไม่ได้มาตรฐาน">ไม่ได้มาตรฐาน</option>
+        <option value="ควรเปลียน">ควรเปลียน</option>
+      </select>
+      <label for="peripheral">ระบุเพิ่มเติม</label>
+      <input type="text" id="peripheral" name="peripheral">
+
+      <label for="peripheral_temp">อุณหภูมิอุปกรณ์ต่อพ่วง(°C)</label>
+      <input type="text" id="peripheral_temp" name="peripheral_temp">
+
+      <label for="recommendation">คำแนะนำ</label>
+      <input type="text" id="recommendation" name="recommendation">
+
+      <label for="ups_result_select">ผลการตรวจ UPS</label>
+      <select id="ups_result_select" name="ups_result_select">
+        <option value="">--เลือก--</option>
+        <option value="มี,ใช้งานได้">มี,ใช้งานได้</option>
+        <option value="มี,เสีย">มี,เสีย</option>
+        <option value="ไม่มี">ไม่มี</option>
+        <option value="คำเเนะนำ,หมายเหตุ">คำเเนะนำ,หมายเหตุ</option>
+      </select>
+      <label for="ups_result">ระบุเพิ่มเติม</label>
+      <input type="text" id="ups_result" name="ups_result">
+
+      <label for="inspection_photos">รูปถ่ายการตรวจ</label>
+      <input type="file" id="inspection_photos" name="inspection_photos[]" accept="image/*" multiple>
+
+      <label for="speedtest_photos">Speedtest Internet</label>
+      <input type="file" id="speedtest_photos" name="speedtest_photo[]" accept="image/*" multiple>
+
+      <label for="status_select">สถานะการตรวจเช็ค</label>
+      <select name="status_select" id="status_select">
+        <option value="">--สถานะการตรวจเช็ค--</option>
+        <option value="ตรวจแล้ว">ตรวจแล้ว</option>
+        <option value="ยังไม่มีการตรวจเช็ค">ยังไม่มีการตรวจเช็ค</option>
+      </select>
+      <label for="status">ระบุเพิ่มเติม</label>
+      <input type="text" id="status" name="status">
+
+      <div class="btn-row">
+        <button type="submit" id="saveInspection">💾 บันทึกข้อมูล</button>
+        <button type="button" id="exportInspection" class="btn-secondary">📤 Export เฉพาะฟอร์มตรวจ</button>
+      </div>
+
+      <div id="latestStatus" class="status-bar">สถานะล่าสุด: -</div>
+    </form>
+  </section>
+
+  <!-- ===== ส่วนคำนวณอายุการซื้อ ===== -->
+  <section class="container">
+    <form id="itemForm">
+      <h2 style="margin-top:0;">กรอกข้อมูลสิ่งของ (คำนวณอายุการซื้อ)</h2>
+      <label for="itemName">ชื่อสิ่งของ</label>
+      <input type="text" id="itemName" required>
+
+      <label for="purchaseDate">วันที่ซื้อ</label>
+      <input type="date" id="purchaseDate" required>
+
+      <button type="submit" id="calcButton">🧮 คำนวณ</button>
+    </form>
+    <div id="purchaseResult" style="margin-top: 14px;"></div>
+  </section>
+
+  <!-- ===== รายการบันทึกทั้งหมด + แถบเครื่องมือเลือก/ลบ ===== -->
+  <section class="container">
+    <div class="list-header">
+      รายการบันทึกข้อมูลการตรวจทั้งหมด
+      <span class="pill muted">แหล่งข้อมูล: บันทึกลงเครื่อง (LocalStorage)</span>
+    </div>
+
+    <!-- Toolbar สำหรับเลือกและลบหลายรายการ -->
+    <div class="toolbar">
+      <label class="record-select">
+        <input type="checkbox" id="toggleSelectAll">
+        เลือกทั้งหมด
+      </label>
+      <button type="button" id="deleteSelected" class="btn-outline danger">🗑️ ลบรายการที่เลือก</button>
+      <button type="button" id="deleteSelectedAndRevert" class="btn-outline danger">🗑️ ลบ + ย้อน ✓ ในแดชบอร์ด</button>
+    </div>
+
+    <div id="recordsList"></div>
+  </section>
+
+  <!-- ===== แดชบอร์ดแผนการตรวจสายไฟ ===== -->
+  <section class="container">
+    <h2>แดชบอร์ดแผนการตรวจสายไฟ</h2>
+    <div class="table-container">
+      <table id="inspectionTable"></table>
+    </div>
+
+    <div class="btn-row">
+      <button type="button" id="exportAllBtn" class="btn-secondary">📤 Export ข้อมูลทั้งหมดในหน้า</button>
+    </div>
+  </section>
+
+  <script>
+    // ================= Config / Keys =================
+    const LS_RECORDS = 'inspectionRecords';    // รายการบันทึก
+    const LS_PLAN    = 'inspectionPlan';       // แผนสำหรับแดชบอร์ด (ติ๊กสัปดาห์)
+    let editingId = null;
+
+    // ================= Utilities =================
+    const MONTHS_TH = ['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+
+    function getMonthName(date){ return MONTHS_TH[date.getMonth()]; }
+    // 1–7 = 1, 8–14 = 2, 15–21 = 3, 22–สิ้นเดือน = 4
+    function getWeekOfMonth(date){
+      const d = date.getDate();
+      if (d <= 7) return 1;
+      if (d <= 14) return 2;
+      if (d <= 21) return 3;
+      return 4;
+    }
+    function getLabelText(form, inputEl){
+      if (!form || !inputEl) return inputEl.name || inputEl.id || "ไม่ทราบชื่อฟิลด์";
+      const lbl = form.querySelector(`label[for='${inputEl.id}']`);
+      return (lbl ? lbl.innerText.trim() : (inputEl.name || inputEl.id || "ไม่ทราบชื่อฟิลด์"));
+    }
+    function collectFormData(form){
+      const inputs = form.querySelectorAll('input, select, textarea');
+      const data = {};
+      inputs.forEach(input => {
+        const name = input.name || input.id;
+        if (!name) return;
+        if (input.type === 'file'){
+          const files = Array.from(input.files || []).map(f => f.name);
+          data[name] = files;
+        } else {
+          data[name] = (input.value || '').trim();
+        }
+      });
+      return data;
+    }
+    function fillFormData(form, data){
+      const inputs = form.querySelectorAll('input, select, textarea');
+      inputs.forEach(input => {
+        const name = input.name || input.id;
+        if (!name) return;
+        if (input.type === 'file') return;
+        input.value = (data[name] || '');
+      });
+    }
+    function downloadTextFile(content, filename, mime="text/plain;charset=utf-8;"){
+      const blob = new Blob([content], { type:mime });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url; a.download = filename;
+      document.body.appendChild(a); a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+    function loadJSON(key, fallback){
+      try { const raw = localStorage.getItem(key); return raw ? JSON.parse(raw) : (fallback ?? null); }
+      catch { return (fallback ?? null); }
+    }
+    function saveJSON(key, val){ localStorage.setItem(key, JSON.stringify(val)); }
+
+    // ================= Dashboard Plan =================
+    const inspectionTableEl = document.getElementById('inspectionTable');
+
+    function updatePlanFromForm(formData){
+      if (!formData.location || !formData.inspectionDate) return;
+      const plan = loadJSON(LS_PLAN, {});
+      const date = new Date(formData.inspectionDate);
+      if (isNaN(date)) return;
+
+      const monthName = getMonthName(date);
+      const week = String(getWeekOfMonth(date)); // "1".."4"
+      const loc = formData.location;
+
+      if (!plan[loc]) plan[loc] = {};
+      if (!plan[loc][monthName]) plan[loc][monthName] = { "1": "", "2": "", "3": "", "4": "" };
+      plan[loc][monthName][week] = "✓";
+
+      saveJSON(LS_PLAN, plan);
+    }
+
+    function revertPlanForRecord(rec){
+      // เคลียร์ ✓ เฉพาะช่องที่รายการนี้เคยติ๊ก
+      if (!rec.location || !rec.inspectionDate) return;
+      const plan = loadJSON(LS_PLAN, null);
+      if (!plan) return;
+
+      const date = new Date(rec.inspectionDate);
+      if (isNaN(date)) return;
+      const loc = rec.location;
+      const monthName = getMonthName(date);
+      const week = String(getWeekOfMonth(date));
+
+      if (plan[loc] && plan[loc][monthName] && plan[loc][monthName][week]){
+        plan[loc][monthName][week] = ""; // เคลียร์ติ๊ก
+        saveJSON(LS_PLAN, plan);
+      }
+    }
+
+    function loadPlanTable(){
+      const plan = loadJSON(LS_PLAN, null);
+
+      let html = '<thead><tr><th rowspan="2">สถานที่</th>';
+      MONTHS_TH.forEach(month => { html += `<th colspan="4">${month}</th>`; });
+      html += '</tr><tr>';
+      [1,2,3,4].forEach(() => { [1,2,3,4].forEach(w => { html += `<th>สัปดาห์ ${w}</th>`; }); });
+      html += '</tr></thead><tbody>';
+
+      if (!plan || Object.keys(plan).length === 0){
+        html += `<tr><td colspan="${1 + MONTHS_TH.length * 4}">ยังไม่มีข้อมูลแผนในเครื่อง — กรุณา “บันทึกข้อมูล” อย่างน้อย 1 รายการเพื่อเริ่มติ๊ก ✓ อัตโนมัติ</td></tr>`;
+        html += '</tbody>';
+        inspectionTableEl.innerHTML = html;
+        return;
+      }
+
+      Object.keys(plan).forEach(loc => {
+        html += `<tr><td>${loc}</td>`;
+        MONTHS_TH.forEach(month => {
+          const weeks = (plan[loc][month] || { "1": "", "2": "", "3": "", "4": "" });
+          [1,2,3,4].forEach(w => {
+            const val = (weeks[String(w)] || '');
+            const isChecked = (val === '✓') || (String(val).toLowerCase() === 'x');
+            html += `<td class="${isChecked ? 'checked' : ''}">${val}</td>`;
+          });
+        });
+        html += '</tr>';
+      });
+
+      html += '</tbody>';
+      inspectionTableEl.innerHTML = html;
+    }
+
+    // ================= Records (รายการบันทึก) =================
+    const inspectionForm = document.getElementById('inspectionForm');
+    const latestStatusDiv = document.getElementById('latestStatus');
+    const exportFormBtn = document.getElementById('exportInspection');
+    const exportAllBtn = document.getElementById('exportAllBtn');
+    const recordsList = document.getElementById('recordsList');
+
+    const toggleSelectAll = document.getElementById('toggleSelectAll');
+    const deleteSelectedBtn = document.getElementById('deleteSelected');
+    const deleteSelectedAndRevertBtn = document.getElementById('deleteSelectedAndRevert');
+
+    function renderRecords(){
+      const records = loadJSON(LS_RECORDS, []);
+      if (!records.length){
+        recordsList.innerHTML = '<div class="card muted">ยังไม่มีรายการบันทึก</div>';
+        return;
+      }
+      recordsList.innerHTML = '';
+      records
+        .sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp))
+        .forEach(rec => {
+          const div = document.createElement('div');
+          div.className = 'card';
+          const ts = new Date(rec.timestamp);
+          const tsStr = `${ts.toLocaleDateString()} ${ts.toLocaleTimeString()}`;
+          div.innerHTML = `
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px;">
+              <div style="flex:1;">
+                <div class="record-select">
+                  <input type="checkbox" class="record-checkbox" data-id="${rec.id}">
+                  <strong>📍 ${rec.location || '-'}</strong>
+                  <span class="pill">${rec.status_select || '-'}</span>
+                </div>
+                📅 วันที่ตรวจ: ${rec.inspectionDate || '-'}<br>
+                🔧 วิธีตรวจ: ${rec.methodSelect || '-'} ${rec.methodExtra ? '('+rec.methodExtra+')' : ''}<br>
+                🔌 สายไฟ: ${rec.resultSelect || '-'} ${(rec.wireResult? '('+rec.wireResult+')' : '')}<br>
+                🌡️ อุณหภูมิสาย: ${rec.wireTempSelect || '-'} ${(rec.wire_temp? '('+rec.wire_temp+')' : '')}<br>
+                🔌 อุปกรณ์ต่อพ่วง: ${rec.peripheralSelect || '-'} ${(rec.peripheral? '('+rec.peripheral+')' : '')} อุณหภูมิ: ${rec.peripheral_temp || '-'}<br>
+                🔋 UPS: ${rec.ups_result_select || '-'} ${(rec.ups_result? '('+rec.ups_result+')' : '')}<br>
+                💬 คำแนะนำ: ${rec.recommendation || '-'}<br>
+                📦 ไฟล์ตรวจ: ${(Array.isArray(rec['inspection_photos[]']) ? rec['inspection_photos[]'].join(', ') : (rec['inspection_photos[]'] || '-'))}<br>
+                🌐 Speedtest: ${(Array.isArray(rec['speedtest_photo[]']) ? rec['speedtest_photo[]'].join(', ') : (rec['speedtest_photo[]'] || '-'))}<br>
+                <span class="muted">🕒 บันทึกเมื่อ: ${tsStr}</span>
+              </div>
+              <div style="display:flex; flex-direction:column; gap:6px; min-width:180px;">
+                editโหลดกลับไปแก้ไข</button>
+                deleteลบรายการนี้</button>
+                <button type="button"ารนี้ (CSV)</button>
+              </div>
+            </div>
+          `;
+          recordsList.appendChild(div);
+        });
+
+      // ปุ่มระดับรายการ (แก้ไข/ลบเดี่ยว/Export)
+      recordsList.querySelectorAll('button[data-action]').forEach(btn => {
+        const action = btn.getAttribute('data-action');
+        const id = btn.getAttribute('data-id');
+        btn.addEventListener('click', () => {
+          const records = loadJSON(LS_RECORDS, []);
+          const idx = records.findIndex(r => r.id === id);
+          const rec = records[idx];
+          if (action === 'delete' && idx !== -1){
+            if (confirm('ต้องการลบรายการนี้ใช่ไหม?')) {
+              records.splice(idx,1);
+              saveJSON(LS_RECORDS, records);
+              if (editingId === id) {
+                editingId = null; inspectionForm.reset();
+                latestStatusDiv.textContent = 'สถานะล่าสุด: ลบรายการที่กำลังแก้ไขแล้ว และยกเลิกโหมดแก้ไข';
+              }
+              renderRecords();
+            }
+          } else if (action === 'edit' && rec){
+            fillFormData(inspectionForm, rec);
+            editingId = id;
+            latestStatusDiv.textContent = 'สถานะล่าสุด: กำลังแก้ไขรายการเดิม (เมื่อบันทึกจะอัปเดตทับ)';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          } else if (action === 'export-one' && rec){
+            const header = "ตรวจโดย IT นายพิสิษฐ์ วงศ์อารยะกุล...............";
+            const csvLines = [];
+            for (const [k,v] of Object.entries(rec)){
+              const val = Array.isArray(v) ? v.join(', ') : v;
+              csvLines.push(`"${k.replace(/"/g,'""')}","${String(val??'').replace(/"/g,'""')}"`);
+            }
+            const d = (rec.inspectionDate || new Date().toISOString().split('T')[0]);
+            downloadTextFile(`${header}\n` + csvLines.join('\n'), `inspection_record_${d}_${rec.location || 'no-location'}.csv`, "text/csv;charset=utf-8;");
+          }
+        });
+      });
+
+      // รีเซ็ต select-all เมื่อ re-render
+      toggleSelectAll.checked = false;
+    }
+
+    // เลือกทั้งหมด / ยกเลิกทั้งหมด
+    toggleSelectAll.addEventListener('change', () => {
+      recordsList.querySelectorAll('.record-checkbox').forEach(cb => {
+        cb.checked = toggleSelectAll.checked;
+      });
+    });
+
+    // Helper: ได้ id รายการที่ถูกเลือก
+    function getSelectedIds(){
+      return Array.from(recordsList.querySelectorAll('.record-checkbox'))
+        .filter(cb => cb.checked)
+        .map(cb => cb.getAttribute('data-id'));
+    }
+
+    // ลบหลายรายการ (เฉพาะบันทึก)
+    deleteSelectedBtn.addEventListener('click', () => {
+      const ids = getSelectedIds();
+      if (!ids.length){
+        alert('กรุณาติ๊กเลือกรายการที่จะลบ');
+        return;
+      }
+      if (!confirm(`ต้องการลบ ${ids.length} รายการใช่ไหม?`)) return;
+
+      let records = loadJSON(LS_RECORDS, []);
+      records = records.filter(r => !ids.includes(r.id));
+      saveJSON(LS_RECORDS, records);
+
+      // ถ้ากำลังแก้ไขรายการที่ถูกลบ ให้ยกเลิก
+      if (editingId && ids.includes(editingId)){
+        editingId = null; inspectionForm.reset();
+        latestStatusDiv.textContent = 'สถานะล่าสุด: ลบรายการที่กำลังแก้ไขแล้ว และยกเลิกโหมดแก้ไข';
+      }
+
+      renderRecords();
+      alert('✅ ลบรายการที่เลือกเรียบร้อยแล้ว');
+    });
+
+    // ลบหลายรายการ + ย้อน ✓ ในแดชบอร์ด
+    deleteSelectedAndRevertBtn.addEventListener('click', () => {
+      const ids = getSelectedIds();
+      if (!ids.length){
+        alert('กรุณาติ๊กเลือกรายการที่จะลบ');
+        return;
+      }
+      if (!confirm(`ต้องการลบ ${ids.length} รายการ และเคลียร์ ✓ ในแดชบอร์ดตามรายการนั้น ๆ ใช่ไหม?`)) return;
+
+      let records = loadJSON(LS_RECORDS, []);
+      const toDelete = records.filter(r => ids.includes(r.id));
+
+      // เคลียร์ ✓ สำหรับแต่ละรายการ
+      toDelete.forEach(revertPlanForRecord);
+
+      // ลบออกจาก records
+      records = records.filter(r => !ids.includes(r.id));
+      saveJSON(LS_RECORDS, records);
+
+      // ยกเลิกโหมดแก้ไขถ้าจำเป็น
+      if (editingId && ids.includes(editingId)){
+        editingId = null; inspectionForm.reset();
+        latestStatusDiv.textContent = 'สถานะล่าสุด: ลบรายการที่กำลังแก้ไขแล้ว และยกเลิกโหมดแก้ไข';
+      }
+
+      renderRecords();
+      loadPlanTable(); // รีเฟรชแดชบอร์ด
+      alert('✅ ลบ + ย้อน ✓ ในแดชบอร์ดเรียบร้อยแล้ว');
+    });
+
+    // ================= Submit ฟอร์ม: Save + Update Dashboard =================
+    inspectionForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const formData = collectFormData(inspectionForm);
+      const nowIso = new Date().toISOString();
+
+      // บันทึก/อัปเดตรายการ
+      let records = loadJSON(LS_RECORDS, []);
+      if (editingId) {
+        const idx = records.findIndex(r => r.id === editingId);
+        if (idx !== -1) {
+          records[idx] = { ...records[idx], ...formData, timestamp: nowIso, id: editingId };
+        } else {
+          records.push({ ...formData, timestamp: nowIso, id: crypto.randomUUID() });
+        }
+        editingId = null;
+      } else {
+        records.push({ ...formData, timestamp: nowIso, id: crypto.randomUUID() });
+      }
+      saveJSON(LS_RECORDS, records);
+
+      // สถานะล่าสุด
+      const location = formData.location || "ไม่ระบุสถานที่";
+      const date = formData.inspectionDate || "ไม่ระบุวันที่";
+      const result = formData.resultSelect || "ไม่ระบุผลตรวจ";
+      latestStatusDiv.textContent = `สถานะล่าสุด: บันทึกแล้ว - สถานที่ ${location}, วันที่ ${date}, ผลตรวจ ${result}`;
+
+      // ✅ อัปเดตแดชบอร์ด (ติ๊ก ✓) และรีเฟรชตารางทันที
+      updatePlanFromForm(formData);
+      loadPlanTable();
+
+      // รีเฟรชรายการด้านล่าง
+      renderRecords();
+
+      alert("✅ บันทึกข้อมูลเรียบร้อยแล้ว!");
+    });
+
+    // ================= Export ปัจจุบัน & ทั้งหน้า =================
+    exportFormBtn.addEventListener('click', () => {
+      const form = inspectionForm;
+      const inputs = form.querySelectorAll('input, select, textarea');
+      let csvContent = "ตรวจโดย IT นายพิสิษฐ์ วงศ์อารยะกุล...............\n";
+      inputs.forEach(input => {
+        const fieldName = getLabelText(form, input);
+        let value = input.value || "";
+        if (input.type === 'file'){
+          value = Array.from(input.files || []).map(f => f.name).join(', ');
+        }
+        const safeField = `"${fieldName.replace(/"/g,'""')}"`;
+        const safeValue = `"${value.replace(/"/g,'""')}"`;
+        csvContent += `${safeField},${safeValue}\n`;
+      });
+      const d = new Date().toISOString().split('T')[0];
+      downloadTextFile(csvContent, `inspection_export_${d}.csv`, "text/csv;charset=utf-8;");
+    });
+
+    exportAllBtn.addEventListener('click', () => {
+      const allInputs = document.querySelectorAll('input, select, textarea');
+      let csvContent = "ตรวจโดย IT นายพิสิษฐ์ วงศ์อารยะกุล............... \n";
+      allInputs.forEach(input => {
+        const form = input.closest('form');
+        const fieldName = getLabelText(form, input);
+        let value = input.value || '';
+        if (input.type === 'file'){
+          value = Array.from(input.files || []).map(f => f.name).join(', ');
+        }
+        const safeField = `"${fieldName.replace(/"/g,'""')}"`;
+        const safeValue = `"${value.replace(/"/g,'""')}"`;
+        csvContent += `${safeField},${safeValue}\n`;
+      });
+      const d = new Date().toISOString().split('T')[0];
+      downloadTextFile(csvContent, `inspection_export_all_${d}.csv`, "text/csv;charset=utf-8;");
+    });
+
+    // ================= ส่วนคำนวณอายุการซื้อ =================
+    const itemForm = document.getElementById("itemForm");
+    const purchaseResultBox = document.getElementById("purchaseResult");
+    itemForm.addEventListener("submit", function(e) {
+      e.preventDefault();
+      const itemName = document.getElementById("itemName").value.trim();
+      const purchaseDateStr = document.getElementById("purchaseDate").value;
+      const purchaseDate = new Date(purchaseDateStr);
+      const now = new Date();
+      if (isNaN(purchaseDate)) {
+        purchaseResultBox.innerHTML = "<p style='color:red;'>กรุณาเลือกวันที่ซื้อ</p>";
+        return;
+      }
+      let years = now.getFullYear() - purchaseDate.getFullYear();
+      let months = now.getMonth() - purchaseDate.getMonth();
+      let days = now.getDate() - purchaseDate.getDate();
+      if (days < 0) {
+        months -= 1;
+        const prevMonth = new Date(now.getFullYear(), now.getMonth(), 0);
+        days += prevMonth.getDate();
+      }
+      if (months < 0) {
+        years -= 1;
+        months += 12;
+      }
+      purchaseResultBox.innerHTML = `
+        <p><strong>สิ่งของ:</strong> ${itemName || "(ไม่ระบุ)"}</p>
+        <p><strong>ซื้อมาแล้ว:</strong> ${years} ปี ${months} เดือน ${days} วัน</p>
+      `;
+    });
+
+    // ================= เริ่มต้น =================
+    window.addEventListener('DOMContentLoaded', () => {
+      renderRecords();
+      loadPlanTable();
+    });
+  </script>
+</body>
+</html>

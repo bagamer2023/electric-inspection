@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>เข้าสู่ระบบตรวจเช็คไฟฟ้า</title>
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: radial-gradient(circle at top left, #1f1c2c, #928dab);
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 48px;
+      margin-bottom: 10px;
+      text-shadow: 2px 2px 5px rgba(0,0,0,0.7);
+    }
+
+    p {
+      font-size: 20px;
+      margin-bottom: 30px;
+      max-width: 600px;
+      text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+    }
+
+    /* ปุ่ม */
+    .start-button {
+      background: linear-gradient(to right, #ff416c, #ff4b2b);
+      color: white;
+      padding: 15px 40px;
+      font-size: 20px;
+      border-radius: 50px;
+      text-decoration: none;
+      display: inline-block;
+      margin: 30px 0;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    }
+
+    .start-button:hover {
+      transform: scale(1.05);
+    }
+
+    /* ตาราง */
+    table {
+      width: 80%;
+      max-width: 900px;
+      border-collapse: collapse;
+      margin-top: 20px;
+      background: rgba(255,255,255,0.15);
+      backdrop-filter: blur(10px);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    th, td {
+      padding: 14px;
+      text-align: center;
+    }
+
+    th {
+      background: rgba(0,0,0,0.4);
+      font-size: 18px;
+    }
+
+    tr:nth-child(even) {
+      background: rgba(255,255,255,0.1);
+    }
+
+    footer {
+      margin-top: 30px;
+      font-size: 14px;
+      color: rgba(255,255,255,0.6);
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>ระบบตรวจเช็คไฟฟ้า</h1>
+  <p>สำหรับเจ้าหน้าที่ IT ใช้งานง่าย และปลอดภัย</p>
+
+  <!-- ตารางตรวจเช็ค -->
+  <table>
+    <tr>
+      <th>ลำดับ</th>
+      <th>อุปกรณ์</th>
+      <th>สถานที่</th>
+      <th>สถานะ</th>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>ตู้ MDB</td>
+      <td>อาคาร A</td>
+      <td>ปกติ</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>UPS Server</td>
+      <td>ห้อง IT</td>
+      <td>ต้องตรวจสอบ</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>ตู้ย่อยไฟฟ้า</td>
+      <td>โรงงาน</td>
+      <td>ปกติ</td>
+    </tr>
+  </table>
+
+  <!-- ปุ่มไปหน้าถัดไป -->
+  <a href="check_Electronic.html" class="start-button">
+    เข้าไปตรวจเช็ค
+  </a>
+
+  <footer>สร้างโดย Phisit Wongarayakul</footer>
+
+</body>
+</html>
